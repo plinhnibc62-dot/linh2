@@ -130,12 +130,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // ================= SCREEN 1: SPLASH SCREEN =================
   const splashScreenEl = document.getElementById('splash-screen');
   if (splashScreenEl) {
-    // Click anywhere to skip splash as fallback
+    // Click anywhere to skip splash
     splashScreenEl.addEventListener('click', () => {
       if (currentScreenIdx === 0) {
         navigateTo('login-screen');
       }
     });
+    // Auto transition timer
+    setTimeout(() => {
+      if (currentScreenIdx === 0) {
+        navigateTo('login-screen');
+      }
+    }, 2000);
   }
 
   // ================= SCREEN 2: LOGIN INPUT SCREEN =================
@@ -223,10 +229,10 @@ document.addEventListener('DOMContentLoaded', () => {
     chatMessagesList.innerHTML = '';
     chatOptionsContainer.innerHTML = '';
 
-    showAIQuery(`Tuyệt vời! Kế hoạch tích lũy <strong>${selectedGoalEmoji} ${selectedGoalText}</strong> là một ý tưởng xuất sắc. Bạn dự kiến khi nào sẽ bắt đầu chuyến đi hoặc hoàn thành mục tiêu này?`, [
+    showAIQuery(`Để bắt đầu thiết lập mục tiêu <strong>${selectedGoalEmoji} ${selectedGoalText}</strong>, bạn cho mình hỏi: <strong>Khi nào cần?</strong>`, [
       { text: "Tháng 06/2028 (Khuyên dùng)", value: "06/2028" },
       { text: "Cuối năm sau (12/2027)", value: "12/2027" },
-      { text: "Tự nhập mốc khác", value: "custom" }
+      { text: "Tự chọn mốc khác", value: "custom" }
     ], handleStep1Response);
   }
 
@@ -243,13 +249,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const typingIndicator = document.createElement('div');
     typingIndicator.className = 'flex items-start gap-2 mb-4 animate-fade-in-up';
     typingIndicator.innerHTML = `
-      <div class="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center shrink-0 border border-pink-200">
-        <svg width="20" height="20" viewBox="0 0 100 100" class="w-5 h-5">
-          <circle cx="50" cy="50" r="40" fill="#FF007F"/>
-          <circle cx="35" cy="45" r="5" fill="white"/>
-          <circle cx="65" cy="45" r="5" fill="white"/>
-          <ellipse cx="50" cy="65" rx="10" ry="6" fill="white"/>
-        </svg>
+      <div class="w-8 h-8 rounded-full overflow-hidden shrink-0 border-2 border-pink-400">
+        <img src="assets/mascot_pink.jpg" class="w-full h-full object-cover">
       </div>
       <div class="bg-slate-100 text-slate-700 px-4 py-2.5 rounded-2xl rounded-tl-none text-sm shadow-sm max-w-[80%]">
         <div class="flex items-center gap-1">
@@ -268,13 +269,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const bubble = document.createElement('div');
       bubble.className = 'flex items-start gap-2 mb-4 animate-fade-in-up';
       bubble.innerHTML = `
-        <div class="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center shrink-0 border border-pink-200">
-          <svg width="20" height="20" viewBox="0 0 100 100" class="w-5 h-5">
-            <circle cx="50" cy="50" r="40" fill="#FF007F"/>
-            <circle cx="35" cy="45" r="5" fill="white"/>
-            <circle cx="65" cy="45" r="5" fill="white"/>
-            <ellipse cx="50" cy="65" rx="10" ry="6" fill="white"/>
-          </svg>
+        <div class="w-8 h-8 rounded-full overflow-hidden shrink-0 border-2 border-pink-400">
+          <img src="assets/mascot_pink.jpg" class="w-full h-full object-cover">
         </div>
         <div class="bg-slate-100 text-slate-800 px-4 py-2.5 rounded-2xl rounded-tl-none text-sm shadow-sm max-w-[80%] leading-relaxed">
           ${text}
@@ -329,9 +325,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function handleStep1Response(value) {
     setTimeout(() => {
-      showAIQuery("Mục tiêu này bạn dự tính tích lũy tổng cộng bao nhiêu tiền nè?", [
-        { text: "42.000.000 VND (Đã tính trượt giá)", value: "42000000" },
-        { text: "30.000.000 VND (Tiết kiệm tối giản)", value: "30000000" },
+      showAIQuery("Dự toán tích lũy cho mục tiêu này là bao nhiêu nè? <strong>Muốn dành bao nhiêu?</strong>", [
+        { text: "42.000.000đ (Khuyên dùng)", value: "42000000" },
+        { text: "30.000.000đ (Tối giản)", value: "30000000" },
         { text: "Nhập số tiền khác", value: "custom_amount" }
       ], handleStep2Response);
     }, 500);
@@ -339,9 +335,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function handleStep2Response(value) {
     setTimeout(() => {
-      showAIQuery("AIgoal mate nhận thấy dòng tiền hàng tháng của bạn khá ổn định. Bạn muốn mình đề xuất một lộ trình thông minh phù hợp hay tự điều chỉnh?", [
-        { text: "Cake Đề xuất thông minh (Khuyên dùng)", value: "ai_proposal" },
-        { text: "Tự điều chỉnh thủ công", value: "manual" }
+      showAIQuery("Để tối ưu lộ trình theo thói quen tiêu dùng, bạn <strong>Có ưu tiên gì không?</strong>", [
+        { text: "Tối ưu hóa lợi nhuận (Khuyên dùng)", value: "optimize" },
+        { text: "Tự động trích tiền linh hoạt", value: "flexible" },
+        { text: "Không có ưu tiên đặc biệt", value: "none" }
       ], handleStep3Response);
     }, 500);
   }
@@ -351,13 +348,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const bubble = document.createElement('div');
       bubble.className = 'flex items-start gap-2 mb-4 animate-fade-in-up';
       bubble.innerHTML = `
-        <div class="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center border border-pink-200 shrink-0">
-          <svg width="20" height="20" viewBox="0 0 100 100" class="w-5 h-5">
-            <circle cx="50" cy="50" r="40" fill="#FF007F"/>
-            <circle cx="35" cy="45" r="5" fill="white"/>
-            <circle cx="65" cy="45" r="5" fill="white"/>
-            <ellipse cx="50" cy="65" rx="10" ry="6" fill="white"/>
-          </svg>
+        <div class="w-8 h-8 rounded-full overflow-hidden shrink-0 border-2 border-pink-400">
+          <img src="assets/mascot_pink.jpg" class="w-full h-full object-cover">
         </div>
         <div class="bg-pastel-pink-purple border border-pink-100 text-slate-800 px-4 py-2.5 rounded-2xl rounded-tl-none text-sm shadow-sm max-w-[80%] leading-relaxed">
           ✨ AIgoal mate đang phân tích dữ liệu chi tiêu và tạo Blueprint tối ưu nhất cho bạn...
@@ -393,6 +385,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const dashboardProgressFill = document.getElementById('dashboard-progress-fill');
   const dashboardProgressText = document.getElementById('dashboard-progress-text');
   const savedAmountEl = document.getElementById('saved-amount-el');
+  const daysLeftEl = document.getElementById('days-left-el');
+  const longestStreakEl = document.getElementById('longest-streak-el');
   const predictionWidgetText = document.getElementById('prediction-widget-text');
 
   function initDashboardScreen() {
@@ -406,12 +400,16 @@ document.addEventListener('DOMContentLoaded', () => {
       if (savedAmountEl) savedAmountEl.innerText = "0đ";
       if (dashboardProgressFill) dashboardProgressFill.style.width = "0%";
       if (dashboardProgressText) dashboardProgressText.innerText = "0%";
+      if (daysLeftEl) daysLeftEl.innerText = "730 ngày";
+      if (longestStreakEl) longestStreakEl.innerText = "0 tháng";
       if (replanningModal) replanningModal.style.display = 'none'; // Only show demo modal for Japan Trip
     } else {
       // Reset to original states in case re-opened
       if (savedAmountEl) savedAmountEl.innerText = "30.240.000đ";
       if (dashboardProgressFill) dashboardProgressFill.style.width = "72%";
       if (dashboardProgressText) dashboardProgressText.innerText = "72%";
+      if (daysLeftEl) daysLeftEl.innerText = "702 ngày";
+      if (longestStreakEl) longestStreakEl.innerText = "12 tháng";
       if (replanningModal) {
         replanningModal.style.display = 'block';
         replanningModal.classList.remove('scale-95', 'opacity-0');
@@ -443,6 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedAmountEl) savedAmountEl.innerText = "32.240.000đ";
         if (dashboardProgressFill) dashboardProgressFill.style.width = "77%";
         if (dashboardProgressText) dashboardProgressText.innerText = "77%";
+        if (daysLeftEl) daysLeftEl.innerText = "722 ngày"; // Delayed 20 days -> Days Left = 702 + 20 = 722
         if (predictionWidgetText) {
           predictionWidgetText.innerHTML = "🎯 Kế hoạch đã được tối ưu hóa theo dòng tiền thực tế mới của bạn.";
         }
